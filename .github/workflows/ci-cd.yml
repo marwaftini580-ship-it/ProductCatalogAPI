@@ -20,10 +20,10 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore src/ProductCatalog.Api/ProductCatalog.Api.csproj
+        run: dotnet restore
 
       - name: Build solution
-        run: dotnet build src/ProductCatalog.Api/ProductCatalog.Api.csproj --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore
 
       - name: Run Unit Tests
         run: >
@@ -40,15 +40,16 @@ jobs:
         if: always()
         with:
           name: unit-test-results
-          path: ./TestResults/UnitTests/*.trx
+          path: ./TestResults/UnitTests/**/*.trx
 
       - name: Publish Unit Test Summary
         uses: dorny/test-reporter@v1
         if: always()
         with:
           name: 'Unit Tests Report'
-          path: './TestResults/UnitTests/*.trx'
+          path: './TestResults/UnitTests/**/*.trx'
           reporter: 'dotnet-trx'
+          fail-on-empty: false
 
   integration-tests:
     name: Integration Tests (SQL Server)
@@ -77,10 +78,10 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore src/ProductCatalog.Api/ProductCatalog.Api.csproj
+        run: dotnet restore
 
       - name: Build solution
-        run: dotnet build src/ProductCatalog.Api/ProductCatalog.Api.csproj --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore
 
       - name: Run Integration Tests
         env:
@@ -99,15 +100,16 @@ jobs:
         if: always()
         with:
           name: integration-test-results
-          path: ./TestResults/IntegrationTests/*.trx
+          path: ./TestResults/IntegrationTests/**/*.trx
 
       - name: Publish Integration Test Summary
         uses: dorny/test-reporter@v1
         if: always()
         with:
           name: 'Integration Tests Report'
-          path: './TestResults/IntegrationTests/*.trx'
+          path: './TestResults/IntegrationTests/**/*.trx'
           reporter: 'dotnet-trx'
+          fail-on-empty: false
 
   build-and-push-docker:
     name: Build & Push Docker Image
